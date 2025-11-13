@@ -3,7 +3,7 @@
 내가 작성한 **라인별 코멘트**와 **PR 리뷰**(Approve / Changes Requested / Comment)를  
 GitHub API로 한 번에 모아 JSON 파일로 저장해주는 스크립트입니다.
 
-> “내가 올해 얼마나 리뷰했는지 한눈에 보고 싶다!”  
+> “내가 얼마나 리뷰했는지 한눈에 보고 싶다!”  
 > → 이 스크립트 하나면 끝!
 
 ## 기능
@@ -17,12 +17,22 @@ GitHub API로 한 번에 모아 JSON 파일로 저장해주는 스크립트입�
 ### 1. 준비물
 
 ```bash
-pip install requests
+pip3 install requests
+pip3 install python-dotenv
 ```
 
 ### 2. 코드 수정
+`.env` 파일을 루트 디렉토리에 추가해주시고 깃허브 토큰을 입력해 주세요
 
-`collect_my_reviews.py` 파일 상단의 아래 5개 값을 본인 것으로 바꿔주세요.
+```.env
+GITHUB_TOKEN=your_github_token
+```
+
+**Token 생성 팁**  
+→ Settings → Developer settings → Personal access tokens → Tokens (classic)  
+→ `repo` 스코프만 체크하면 충분합니다.
+
+`pr_review_expoter` 파일 상단의 아래 5개 값을 본인 것으로 바꿔주세요.
 
 ```python
 TOKEN     = "깃허브 Personal Access Token"   # repo 권한 포함
@@ -32,14 +42,11 @@ MY_ID     = "본인의 GitHub 아이디"
 FILE_NAME = "저장할파일명.json"              # 예: my_reviews_2025.json
 ```
 
-**Token 생성 팁**  
-→ Settings → Developer settings → Personal access tokens → Tokens (classic)  
-→ `repo` 스코프만 체크하면 충분합니다.
 
 ### 3. 실행
 
 ```bash
-python python collect_my_reviews.py
+python3 pr_review_expoter.py
 ```
 
 ### 4. 결과 확인
