@@ -4,11 +4,18 @@ import os
 
 # 내가 작성한 리뷰를 가져오는 코드
 
-TOKEN = "깃허브 토큰을 입력해주세요"
-OWNER = "OWNER를 입력해주세요"
-REPO = "REPO를 입력해주세요"
-MY_ID = "깃허브 ID를 입력해주세요"
-FILE_NAME = "생성할 파일명을 입력해주세요"
+
+TOKEN = os.getenv("GITHUB_TOKEN")
+if not TOKEN:
+    print("환경변수를 설정해주세요!")
+    exit()
+
+# ==================== 설정값 입력 ====================
+OWNER = "OWNER를 입력해주세요"            # 예: octocat
+REPO = "REPO를 입력해주세요"              # 예: Hello-World
+MY_ID = "깃허브 ID를 입력해주세요"        # 예: chya-chya
+FILE_NAME = "생성할 파일명을 입력해주세요"  # 예: pr_data.json
+# ====================================================
 headers = {"Authorization": f"token {TOKEN}"}
 
 # -------------------------------------
