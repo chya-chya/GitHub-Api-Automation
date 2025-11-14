@@ -32,10 +32,9 @@ GITHUB_TOKEN=your_github_token
 → Settings → Developer settings → Personal access tokens → Tokens (classic)  
 → `repo` 스코프만 체크하면 충분합니다.
 
-`pr_review_expoter` 파일 상단의 아래 5개 값을 본인 것으로 바꿔주세요.
+`pr_review_expoter` 파일 상단의 아래 4개 값을 본인 것으로 바꿔주세요.
 
 ```python
-TOKEN     = "깃허브 Personal Access Token"   # repo 권한 포함
 OWNER     = "조직 또는 사용자 이름"
 REPO      = "레포지토리 이름"
 MY_ID     = "본인의 GitHub 아이디"
