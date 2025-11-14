@@ -1,0 +1,58 @@
+name: Discord Notify
+
+on:
+  issues:
+    types: [opened, closed, reopened]
+  pull_request:
+    types: [opened, closed, synchronize, reopened, review_requested]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send to Discord
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: |
+          EVENT_TYPE="${{ github.event_name }}"
+          ACTION="${{ github.event.action }}"
+          REPO="${{ github.repository }}"
+          NUMBER="${{ github.event.issue.number || github.event.pull_request.number }}"
+          TITLE="${{ github.event.issue.title || github.event.pull_request.title }}"
+          URL="${{ github.event.issue.html_url || github.event.pull_request.html_url }}"
+          USER="${{ github.event.sender.login }}"
+          COLOR=0
+
+          # 색상 설정 (이슈: 초록, PR: 파랑, 닫힘: 빨강)
+          if [[ "$EVENT_TYPE" == "issues" ]]; then
+            [[ "$ACTION" == "closed" ]] && COLOR=16711680 || COLOR=5763719
+            EVENT="이슈"
+          else
+            [[ "$ACTION" == "closed" && "${{ github.event.pull_request.merged }}" == "true" ]] && COLOR=10181046 || \
+            [[ "$ACTION" == "closed" ]] && COLOR=16711680 || COLOR=3447003
+            EVENT="PR"
+          fi
+
+          # 병합 여부 메시지
+          if [[ "$EVENT" == "PR" && "$ACTION" == "closed" ]]; then
+            if [[ "${{ github.event.pull_request.merged }}" == "true" ]]; then
+              ACTION_MSG="병합됨"
+            else
+              ACTION_MSG="닫힘"
+            fi
+          else
+            ACTION_MSG="$ACTION"
+          fi
+
+          curl -H "Content-Type: application/json" -d "{
+            \"embeds\": [{
+              \"title\": \"[$EVENT #$NUMBER] $TITLE\",
+              \"url\": \"$URL\",
+              \"color\": $COLOR,
+              \"fields\": [
+                { \"name\": \"작업\", \"value\": \"$ACTION_MSG\", \"inline\": true },
+                { \"name\": \"작성자\", \"value\": \"$USER\", \"inline\": true }
+              ],
+              \"timestamp\": \"$(date -u +\"%Y-%m-%dT%H:%M:%SZ\")\"
+            }]
+          }" "$DISCORD_WEBHOOK"
